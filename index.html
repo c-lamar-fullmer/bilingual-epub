@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bilingual EPUB Maker</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <h1>Bilingual EPUB Maker</h1>
+  <p class="lead">Turn an AO3 HTML download into an EPUB where every English paragraph is followed by its translation.
+  Everything runs in your browser using Chrome's built-in translator: nothing is uploaded, and no account or key is needed.</p>
+
+  <p id="unsupported" class="banner" hidden>
+    This browser doesn't have Chrome's Translator API. Use <strong>desktop Chrome 138 or newer</strong>.
+    You can still load a file and look around, but translating is disabled.
+  </p>
+
+  <section id="step-file">
+    <h2>1. Choose the AO3 file</h2>
+    <label id="drop" class="drop">
+      <input id="file" type="file" accept=".html,.htm,text/html">
+      <span>Drop the downloaded <code>.html</code> file here, or click to choose it</span>
+    </label>
+  </section>
+
+  <section id="step-options" hidden>
+    <h2>2. Choose chapters and language</h2>
+    <div class="work">
+      <strong id="work-title"></strong>
+      <span id="work-author"></span>
+    </div>
+
+    <div class="row">
+      <label>Translate into
+        <select id="lang"></select>
+      </label>
+      <span id="lang-status" class="muted"></span>
+    </div>
+
+    <div class="row">
+      <button id="all" type="button" class="link">Select all</button>
+      <button id="none" type="button" class="link">Select none</button>
+      <span id="totals" class="muted"></span>
+    </div>
+    <ul id="chapters"></ul>
+  </section>
+
+  <section id="step-run" hidden>
+    <h2>3. Translate and build</h2>
+    <div class="row">
+      <button id="go" type="button" class="primary">Translate &amp; build EPUB</button>
+      <button id="cancel" type="button" hidden>Cancel</button>
+    </div>
+    <progress id="bar" value="0" max="1" hidden></progress>
+    <p id="status" class="muted" role="status"></p>
+    <p id="result" hidden><a id="download" class="primary-link" download>Download EPUB</a></p>
+  </section>
+
+  <footer>
+    <p>Finished paragraphs are remembered in this browser, so cancelling or re-running doesn't repeat work.
+    <button id="clear" type="button" class="link">Clear remembered translations</button></p>
+    <p>Machine translation is imperfect. The original text is always kept next to it.</p>
+  </footer>
+</main>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
