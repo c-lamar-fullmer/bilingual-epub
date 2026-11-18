@@ -1,5 +1,5 @@
-// Builds the EPUB file list. Every original paragraph is followed by its translation:
-//   <p>Original</p><p class="tr" lang="de">Übersetzung</p>
+// Builds the EPUB file list. Every translated paragraph is followed by its original:
+//   <p class="tr" lang="de">Übersetzung</p><p>Original</p>
 //
 // EPUB = a ZIP containing: mimetype, META-INF/container.xml, an OPF "packing list"
 // (content.opf), a table of contents (nav.xhtml + toc.ncx) and one XHTML file per chapter.
@@ -14,9 +14,11 @@ h2.chapter-title { margin-bottom: 0.3em; }
 p { margin: 0 0 0.6em 0; text-indent: 0; }
 p.center { text-align: center; }
 p.quote { margin-left: 1.5em; }
-/* the translation: italic, indented with a thin rule, and a bigger gap after the pair */
-p.tr { font-style: italic; color: #444; margin: 0 0 1.3em 0; padding-left: 0.7em; border-left: 2px solid #999; }
-p.tr em, p.tr strong { font-style: normal; }
+/* German paragraph sits close to its English original, which has a thin rule,
+   is slightly smaller, and is followed by a bigger gap before the next pair */
+p.tr { margin-bottom: 0.3em; }
+p.orig { font-size: 0.9em; margin-bottom: 1.3em; padding-left: 0.7em; border-left: 2px solid #999; }
+p.orig.center { padding-left: 0; border-left: 0; }  /* no rule on centered lines */
 hr { margin: 1.5em 30%; }
 dl.tags dt { font-weight: bold; margin-top: 0.4em; }
 dl.tags dd { margin: 0; }
@@ -34,24 +36,25 @@ ${body}
 </html>
 `;
 
-/** One original block, plus its translation right below it (if it has one). */
+/** One block: the translation first (if it has one), then the original. */
 function renderBlock(b, lang) {
   if (b.type === 'hr') return '<hr/>';
   const tag = b.tag;
   const cls = [b.center && 'center', b.quote && 'quote'].filter(Boolean).join(' ');
-  let out = `<${tag}${cls ? ` class="${cls}"` : ''}>${b.html}</${tag}>`;
-  if (b.tr) {
-    const translated = esc(b.tr).replace(/\n/g, '<br/>');
-    out += `\n<${tag} class="tr${cls ? ' ' + cls : ''}" lang="${lang.code}" xml:lang="${lang.code}">${translated}</${tag}>`;
-  }
-  return out;
+
+  const origCls = [cls, b.tr && 'orig'].filter(Boolean).join(' ');
+  const original = `<${tag}${origCls ? ` class="${origCls}"` : ''}>${b.html}</${tag}>`;
+  if (!b.tr) return original;
+
+  const translated = esc(b.tr).replace(/\n/g, '<br/>');
+  const german = `<${tag} class="tr${cls ? ' ' + cls : ''}" lang="${lang.code}" xml:lang="${lang.code}">${translated}</${tag}>`;
+  return german + '\n' + original;
 }
 
 const renderBlocks = (blocks, lang) => blocks.map((b) => renderBlock(b, lang)).join('\n');
 
 function titleBlock(text, tr, lang) {
-  return `<h2 class="chapter-title">${esc(text)}</h2>` +
-    (tr ? `\n<p class="tr center" lang="${lang.code}" xml:lang="${lang.code}">${esc(tr)}</p>` : '');
+  return (tr ? `\n<p class="tr center" lang="${lang.code}" xml:lang="${lang.code}">${esc(tr)}</p>` : '') + `<h2 class="chapter-title">${esc(text)}</h2>`;
 }
 
 /**
@@ -61,7 +64,7 @@ function titleBlock(text, tr, lang) {
  */
 export function buildEpub(book, chapters, lang) {
   const uid = 'urn:uuid:' + crypto.randomUUID();
-  const bookTitle = `${book.title} (English / ${lang.name})`;
+  const bookTitle = `${book.title} (${lang.name} / English)`;
   const modified = new Date().toISOString().replace(/\.\d+Z$/, 'Z');
 
   // --- front page ---

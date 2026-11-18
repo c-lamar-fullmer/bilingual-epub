@@ -1,6 +1,6 @@
 # Bilingual EPUB Maker
 
-Upload an AO3 "HTML" download, pick chapters and a language, get an EPUB where every English paragraph is followed by its translation. 100% client-side: no server, no API keys.
+Upload an AO3 "HTML" download, pick chapters and a language, get an EPUB where every paragraph  is translated followed by its original. 100% client-side: no server, no API keys.
 
 ## Run locally
 Chrome's Translator API needs desktop Chrome 138+ and https or localhost:

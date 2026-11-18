@@ -11,7 +11,7 @@
 <body>
   <main>
     <h1>Bilingual EPUB Maker</h1>
-    <p class="lead">Turn an AO3 HTML download into an EPUB where every English paragraph is followed by its translation.
+    <p class="lead">Turn an AO3 HTML download into an EPUB where every paragraph is translated followed by its original.
       Everything runs in your browser using Chrome's built-in translator: nothing is uploaded, and no account or key is
       needed.</p>
 
@@ -62,8 +62,12 @@
     </section>
 
     <footer>
-      <p>Finished paragraphs are remembered in this browser, so cancelling or re-running doesn't repeat work.
+      <p>Finished paragraphs are stored in this browser (a few MB per book) so 
+        re-running does not repeat work. Clear them to free the storage or to start fresh.
+      </p>
+      <p>
         <button id="clear" type="button" class="link">Clear remembered translations</button>
+        <span id="clear-msg" class="muted" role="status"></span>
       </p>
       <p>Machine translation is imperfect. The original text is always kept next to it.</p>
     </footer>

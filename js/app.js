@@ -192,6 +192,9 @@ $('go').addEventListener('click', async () => {
 });
 
 $('clear').addEventListener('click', async () => {
-  await clearCache();
-  $('status').textContent = 'Remembered translations cleared.';
+  const ok = await clearCache();
+  $('clear-msg').textContent = ok 
+    ? '✓ All remembered translations cleared.' 
+    : 'Could not clear them (browser storage unavailable).';
+  setTimeout(() => { $('clear-msg').textContent = ''; }, 5000); // hide it after 5 seconds
 });

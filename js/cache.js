@@ -41,4 +41,16 @@ const keyFor = (lang, text) => `${lang}\u0001${text}`;
 
 export const getCached = (lang, text) => request('readonly', (s) => s.get(keyFor(lang, text)));
 export const putCached = (lang, text, value) => request('readwrite', (s) => s.put(value, keyFor(lang, text)));
-export const clearCache = () => request('readwrite', (s) => s.clear());
+
+export const clearCache = () =>
+  openDb().then((db) => new Promise((resolve) => {
+    if (!db) return resolve();
+    try {
+      const tx = db.transaction(STORE, 'readwrite');
+      tx.objectStore(STORE).clear();
+      tx.oncomplete = () => resolve(true); // only true once the browser has finished
+      tx.onerror = tx.onabort = () => resolve(false);
+    } catch {
+      resolve(false);
+    }
+  }));
